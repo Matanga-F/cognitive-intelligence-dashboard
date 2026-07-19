@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'export', 
   outputFileTracingRoot: __dirname,
   eslint: {
     ignoreDuringBuilds: true,
@@ -18,6 +18,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.pixabay.com' },
       { protocol: 'https', hostname: 'img.rocket.new' },
     ],
+    unoptimized: true, 
   },
   async headers() {
     return [
@@ -32,7 +33,7 @@ const nextConfig = {
         ],
       },
     ];
-  },
+  },  // Fixed: removed semicolon here
   env: {
     NEXT_PUBLIC_CIOS_API_URL: process.env.NEXT_PUBLIC_CIOS_API_URL || 'http://localhost:8000',
     NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || '2.4.1',
