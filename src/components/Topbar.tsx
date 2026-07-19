@@ -66,7 +66,7 @@ export default function Topbar() {
   const healthLabel = healthStatus === 'online' ? 'All Systems Nominal' : healthStatus === 'degraded' ? 'Degraded' : 'Offline';
 
   return (
-    <header className="h-14 glass-panel border-b border-border flex items-center px-3 gap-3 shrink-0 z-30">
+    <header className="h-14 glass-panel border-b border-border flex items-center px-3 gap-3 shrink-0 z-30 w-full">
       <button onClick={openMobileSidebar} className="lg:hidden btn-ghost-cios p-2 rounded-lg" aria-label="Open navigation">
         <Menu size={18} />
       </button>

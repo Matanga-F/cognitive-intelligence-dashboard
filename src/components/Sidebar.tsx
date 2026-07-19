@@ -49,7 +49,6 @@ const NAV_SECTIONS: NavSection[] = [
       { href: '/engine-status', label: 'Engines', icon: <Cpu size={14} /> },
       { href: '/vision', label: 'Vision', icon: <Eye size={14} /> },
       { href: '/conversation', label: 'Conversation', icon: <MessageSquare size={14} /> },
-      
     ],
   },
   {
@@ -127,23 +126,23 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
         { href: '/system-health', label: 'Health', icon: <Activity size={14} /> },
     ],
-    },
-    {
+  },
+  {
     id: 'knowledge',
     label: 'Knowledge',
     icon: <Brain size={12} />,
     items: [
         { href: '/world-model', label: 'World Model', icon: <Box size={14} /> },
     ],
-    },
-    {
+  },
+  {
     id: 'intelligence',
     label: 'Intelligence',
     icon: <Globe size={12} />,
     items: [
         { href: '/osint', label: 'OSINT', icon: <Globe size={14} /> },
     ],
-    },
+  },
 ];
 
 const STATUS_DOT: Record<string, string> = {
@@ -264,12 +263,12 @@ export default function Sidebar() {
       <button id="sidebar-mobile-trigger" className="hidden" onClick={() => setMobileOpen(true)} aria-label="Open sidebar" />
 
       <aside
-        className={`cios-sidebar flex flex-col h-full z-50 relative shrink-0 border-r border-border
+        className={`cios-sidebar flex flex-col h-full z-50 relative shrink-0 border-r border-border bg-card
           ${collapsed ? 'collapsed' : ''}
           fixed lg:relative
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          transition-transform duration-300 lg:transition-none`}
-        style={{ width: collapsed ? 64 : 260, background: 'var(--card)' }}
+          transition-transform duration-300`}
+        style={{ width: collapsed ? 64 : 260 }}
       >
         {/* ── Logo ────────────────────── */}
         <div className={`flex items-center h-14 border-b border-border px-3 shrink-0 ${collapsed ? 'justify-center' : 'gap-3'}`}>
