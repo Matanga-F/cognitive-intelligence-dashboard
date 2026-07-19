@@ -1,0 +1,15 @@
+services:
+  dashboard:
+    build: .
+    container_name: cios-dashboard
+    ports:
+      - "4028:3000"
+    environment:
+      - NEXT_PUBLIC_CIOS_API_URL=http://localhost:8000
+    networks:
+      - cios-network
+    restart: unless-stopped
+
+networks:
+  cios-network:
+    driver: bridge
