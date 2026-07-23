@@ -3,18 +3,27 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, Wifi, WifiOff, AlertTriangle, CheckCircle } from 'lucide-react';
 import { apiGet } from '../lib/api';
+import {
+  getLocalTimezone,
+  getTimeZoneAbbreviation,
+  getCurrentLocalTime,
+  formatLocalTime,
+} from '../lib/timezone';
 
 export default function Topbar() {
   const [clockStr, setClockStr] = useState('--:--:-- UTC');
   const [healthStatus, setHealthStatus] = useState<'online' | 'degraded' | 'offline'>('online');
   const [metrics, setMetrics] = useState({ engines: '--', worldModel: '--', events: '--', memory: '--' });
+  const [timezoneAbbr, setTimezoneAbbr] = useState('UTC');
 
-  // Clock
+  // Clock — uses geo-configurable timezone
   useEffect(() => {
+    setTimezoneAbbr(getTimeZoneAbbreviation());
+    
     const tick = () => {
-      const now = new Date();
+      const now = getCurrentLocalTime();
       setClockStr(
-        `${now.getUTCHours().toString().padStart(2, '0')}:${now.getUTCMinutes().toString().padStart(2, '0')}:${now.getUTCSeconds().toString().padStart(2, '0')} UTC`
+        `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${getTimeZoneAbbreviation()}`
       );
     };
     tick();
@@ -45,7 +54,7 @@ export default function Topbar() {
         setMetrics({
           engines: `${engineList.length}`,
           worldModel: world?.entities?.toLocaleString() || '--',
-          events: '--', // no direct endpoint yet
+          events: '--',
           memory: world?.memory_events || '--',
         });
       } catch {

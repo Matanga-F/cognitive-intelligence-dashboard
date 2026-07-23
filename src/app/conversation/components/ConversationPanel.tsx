@@ -8,15 +8,22 @@ import {
 import { toast } from 'sonner';
 import { apiPost } from '../../../lib/api';
 import type { ConversationTurn, ReasoningStep } from '../../../lib/types';
+import {
+  getLocalTimezone,
+  getTimeZoneAbbreviation,
+  getCurrentLocalTime,
+  formatLocalTime,
+} from '../../../lib/timezone';
 
 // ── Helpers ───────────────────────────
 const SESSION_ID = `dash-${typeof window !== 'undefined' ? Date.now().toString(36) : 'ssr'}-${Math.random().toString(36).slice(2, 6)}`;
 
 const INITIAL_CONTENT = 'C.I.O.S online. All systems operational. How may I assist you, Sir?';
 
-function getUTCTimeString(): string {
-  const now = new Date();
-  return `${now.getUTCHours().toString().padStart(2, '0')}:${now.getUTCMinutes().toString().padStart(2, '0')}:${now.getUTCSeconds().toString().padStart(2, '0')} UTC`;
+function getLocalTimeString(): string {
+  const now = getCurrentLocalTime();
+  const abbr = getTimeZoneAbbreviation();
+  return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${abbr}`;
 }
 
 const REASONING_STYLES: Record<string, string> = {
@@ -36,14 +43,16 @@ export default function ConversationPanel() {
   const logRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [timezoneAbbr, setTimezoneAbbr] = useState('UTC');
 
   // Set initial turn on client only (avoids hydration mismatch)
   useEffect(() => {
+    setTimezoneAbbr(getTimeZoneAbbreviation());
     setTurns([{
       id: 'turn-init',
       role: 'assistant',
       content: INITIAL_CONTENT,
-      timestamp: getUTCTimeString(),
+      timestamp: getLocalTimeString(),
       model: 'CIOS',
     }]);
     setMounted(true);
@@ -80,7 +89,7 @@ export default function ConversationPanel() {
       id: `turn-user-${Date.now()}`,
       role: 'user',
       content: text,
-      timestamp: getUTCTimeString(),
+      timestamp: getLocalTimeString(),
     };
 
     setTurns(prev => [...prev, userTurn]);
@@ -100,7 +109,7 @@ export default function ConversationPanel() {
         id: `turn-cios-${Date.now()}`,
         role: 'assistant',
         content: responseContent || 'No response received.',
-        timestamp: getUTCTimeString(),
+        timestamp: getLocalTimeString(),
         model: response?.model_used || 'CIOS',
         tokensIn: text.split(' ').length,
         tokensOut: responseContent ? responseContent.split(' ').length : 0,
@@ -115,7 +124,7 @@ export default function ConversationPanel() {
         id: `turn-error-${Date.now()}`,
         role: 'assistant',
         content: `Connection error: ${error?.message || 'Unable to reach CIOS'}. Verify CIOS is running on port 8000.`,
-        timestamp: getUTCTimeString(),
+        timestamp: getLocalTimeString(),
         model: 'ERROR',
       };
       setTurns(prev => [...prev, errorTurn]);
@@ -138,7 +147,7 @@ export default function ConversationPanel() {
       id: 'turn-init',
       role: 'assistant',
       content: INITIAL_CONTENT,
-      timestamp: getUTCTimeString(),
+      timestamp: getLocalTimeString(),
       model: 'CIOS',
     }]);
     toast.info('Conversation cleared');
@@ -194,6 +203,9 @@ export default function ConversationPanel() {
           </h1>
           <span className="text-2xs font-mono px-2 py-0.5 bg-muted rounded border border-border text-muted-foreground">
             {turns.length} turns
+          </span>
+          <span className="text-2xs font-mono px-2 py-0.5 bg-primary/10 rounded border border-primary/20 text-primary">
+            {timezoneAbbr}
           </span>
         </div>
         <div className="flex items-center gap-2">
